@@ -13,7 +13,12 @@ module Analytical
       def event(*args) # name, options, callback
         <<-JS.gsub(/^ {10}/, '')
           if (typeof(Intercom) !== 'undefined') {
-            Intercom('trackEvent', name, options || {});
+            try {
+              Intercom('trackEvent', name, options || {});
+            }
+            catch (e) {
+              // temporary patch to prevent Intercom from throwing JS errors
+            }
             setTimeout(function() {
               Intercom('update');
             }, 2000);
